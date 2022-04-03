@@ -21,21 +21,40 @@ contract AirlineTicketManager {
     mapping(address => Ticket) ticketOwners;
 
     // Task 02 - Using enum to store Ticket Classes
-    enum TicketClass { FirstClass, BusinessClass, EconomyClass }
+    enum TicketClass {
+        FirstClass,
+        BusinessClass,
+        EconomyClass
+    }
 
     // Task 01 - Function to initiliaze the struct and set the ticket price according to the ticket class
-    function createTicket( string memory _name, string memory _destination, string memory _passportID, uint256 _ticketClass) public {
+    function createTicket(
+        string memory _name,
+        string memory _destination,
+        string memory _passportID,
+        uint256 _ticketClass
+    ) public {
         uint256 _price;
         TicketClass TC;
 
         TC = setTicketClass(_ticketClass);
         setTicketPrice(_ticketClass, _price);
 
-        Ticket memory userTicket = Ticket( _name, _destination, _passportID, _price, TC);
+        Ticket memory userTicket = Ticket(
+            _name,
+            _destination,
+            _passportID,
+            _price,
+            TC
+        );
         ticketOwners[msg.sender] = userTicket;
     }
 
-    function setTicketClass(uint256 _classVal) public pure returns (TicketClass) {
+    function setTicketClass(uint256 _classVal)
+        public
+        pure
+        returns (TicketClass)
+    {
         require(uint256(TicketClass.EconomyClass) >= _classVal);
 
         TicketClass _TC;
@@ -43,7 +62,11 @@ contract AirlineTicketManager {
         return _TC;
     }
 
-    function setTicketPrice(uint256 _ticketClass, uint256 _ticketPrice) public pure {
+    // Task 03 - Set Ticket Prices according to the Ticket Class
+    function setTicketPrice(uint256 _ticketClass, uint256 _ticketPrice)
+        public
+        pure
+    {
         // Converted the given ether units to wei units
         if (_ticketClass == 0) {
             _ticketPrice = 10000000000000000 wei;
@@ -72,7 +95,7 @@ contract AirlineTicketManagerFactory {
     address public owner;
     mapping(address => bool) whitelist;
     event AddedToWhitelist(address indexed account);
-    event RemovedFromWhitelist(address indexed account);   
+    event RemovedFromWhitelist(address indexed account);
 
     AirlineTicketManager[] atmOwners;
 
@@ -80,7 +103,12 @@ contract AirlineTicketManagerFactory {
         owner = _owner;
     }
 
-    function createATMOwner( string memory _name, string memory _destination, string memory _passportID, uint256 _ticketClass) public onlyOwner {
+    function createATMOwner(
+        string memory _name,
+        string memory _destination,
+        string memory _passportID,
+        uint256 _ticketClass
+    ) public onlyOwner {
         AirlineTicketManager newATM = new AirlineTicketManager(msg.sender);
 
         newATM.createTicket(_name, _destination, _passportID, _ticketClass);
