@@ -25,7 +25,7 @@ contract AirlineTicketManager {
     enum TicketClass { FirstClass, BusinessClass, EconomyClass }
 
     // Task 01 - Function to initiliaze the struct and set the ticket price according to the ticket class
-    function createTicket( string memory _name, string memory _destination, string memory _passportID, uint256 _ticketClass) public {
+    function createTicket( string memory _name, string memory _destination, string memory _passportID, uint _ticketClass) public {
         uint256 _price;
         TicketClass TC;
 
@@ -36,8 +36,8 @@ contract AirlineTicketManager {
         ticketOwners[msg.sender] = userTicket;
     }
 
-    function setTicketClass(uint256 _classVal) public pure returns (TicketClass) {
-        require(uint256(TicketClass.EconomyClass) >= _classVal);
+    function setTicketClass(uint _classVal) public pure returns (TicketClass) {
+        require(uint(TicketClass.EconomyClass) >= _classVal);
 
         TicketClass _TC;
         _TC = TicketClass(_classVal);
@@ -45,7 +45,7 @@ contract AirlineTicketManager {
     }
     
     // Task 03 - Set Ticket Prices according to the Ticket Class
-    function setTicketPrice(uint256 _ticketClass, uint256 _ticketPrice) public pure {
+    function setTicketPrice(uint _ticketClass, uint256 _ticketPrice) public pure {
         // Converted the given ether units to wei units
         if (_ticketClass == 0) {
             _ticketPrice = 10000000000000000 wei;
