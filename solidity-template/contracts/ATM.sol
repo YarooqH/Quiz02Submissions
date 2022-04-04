@@ -25,7 +25,7 @@ contract AirlineTicketManager {
     enum TicketClass { FirstClass, BusinessClass, EconomyClass }
 
     // Task 01 - Function to initiliaze the struct and set the ticket price according to the ticket class
-    function createTicket( string memory _name, string memory _destination, string memory _passportID, uint _ticketClass) public {
+    function createTicket( string memory _name, string memory _destination, string memory _passportID, uint _ticketClass, address _receiver) public {
         uint256 _price;
         TicketClass TC;
 
@@ -33,6 +33,7 @@ contract AirlineTicketManager {
         setTicketPrice(_ticketClass, _price);
 
         Ticket memory userTicket = Ticket( _name, _destination, _passportID, _price, TC);
+        sendPayment(_receiver, _price);
         ticketOwners[msg.sender] = userTicket;
     }
 
@@ -54,6 +55,11 @@ contract AirlineTicketManager {
         } else if (_ticketClass == 2) {
             _ticketPrice = 5000000000000000 wei;
         }
+    }
+
+    function sendPayment(address _receiver, uint256 _amount) public payable {    
+        (bool sent, bytes memory data) = _receiver.call{value: _amount}("");
+        require(sent, "Failed to send Ether");
     }
 
     // Task 04 - Function to receive payments and using the functions to trigger an event
@@ -80,14 +86,14 @@ contract AirlineTicketManagerFactory {
 
     AirlineTicketManager[] atmOwners;
 
-    constructor(address _owner) {
-        owner = _owner;
+    constructor() {
+        owner = msg.sender;
     }
 
-    function createATMOwner( string memory _name, string memory _destination, string memory _passportID, uint _ticketClass) public onlyOwner {
-        AirlineTicketManager newATM = new AirlineTicketManager(msg.sender);
+    function createATMOwner( address _ticketOwner, string memory _name, string memory _destination, string memory _passportID, uint _ticketClass) public onlyOwner {
+        AirlineTicketManager newATM = new AirlineTicketManager(_ticketOwner);
 
-        newATM.createTicket(_name, _destination, _passportID, _ticketClass);
+        newATM.createTicket(_name, _destination, _passportID, _ticketClass, owner);
 
         atmOwners.push(newATM);
     }
