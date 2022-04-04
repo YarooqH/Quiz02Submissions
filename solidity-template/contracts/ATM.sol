@@ -12,8 +12,9 @@ contract AirlineTicketManager {
     }
 
     address public owner;
+    uint256 balance = 0;
 
-    constructor(address _owner) public {
+    constructor(address _owner) {
         owner = _owner;
     }
 
@@ -59,10 +60,12 @@ contract AirlineTicketManager {
     event amountReceived(uint256 val);
 
     receive() external payable {
+        balance += msg.value;
         emit amountReceived(msg.value);
     }
 
     fallback() external payable {
+        balance += msg.value;
         emit amountReceived(msg.value);
     }
 }
