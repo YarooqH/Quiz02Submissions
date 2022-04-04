@@ -84,7 +84,7 @@ contract AirlineTicketManagerFactory {
         owner = _owner;
     }
 
-    function createATMOwner( string memory _name, string memory _destination, string memory _passportID, uint256 _ticketClass) public onlyOwner {
+    function createATMOwner( string memory _name, string memory _destination, string memory _passportID, uint _ticketClass) public onlyOwner {
         AirlineTicketManager newATM = new AirlineTicketManager(msg.sender);
 
         newATM.createTicket(_name, _destination, _passportID, _ticketClass);
